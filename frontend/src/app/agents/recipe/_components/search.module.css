@@ -1,0 +1,494 @@
+/* V4 Phase 5 Day 10 — the search view.
+ *
+ * Its own file rather than more rows in `request.module.css`, and the reason is
+ * the day's own rule: *a found dish must not look like an invented one.* Two
+ * screens whose classes live in one stylesheet share a `.card`, and the first
+ * time somebody reuses one across the boundary the boundary is gone. Nothing
+ * here is imported by the generator and nothing there is imported by this.
+ *
+ * Every colour, radius, shadow, font and easing is a token from `globals.css`,
+ * which this phase does not touch. The visual difference between this view and
+ * the generator is made out of **weight and furniture**, not out of a second
+ * palette: the accent rule down the left of the panel, the flat list where the
+ * generator has cards, the source link where the generator has a why sentence.
+ */
+
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* The whole-view mark. Quiet type, but it sits above everything and it is the
+ * first thing read — a boundary a chef crosses on purpose. */
+.published {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  background: var(--accent-wash);
+  border-left: 3px solid var(--accent-deep);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.published b {
+  color: var(--ink);
+}
+
+/* ── The box ────────────────────────────────────────────────────────────── */
+.searchRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.searchRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.7rem;
+  align-items: flex-end;
+}
+
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 8.5rem;
+  flex: 1 1 8.5rem;
+  max-width: 14rem;
+}
+
+.filterLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.clear {
+  border: 0;
+  background: none;
+  color: var(--accent-deep);
+  font: inherit;
+  font-size: 0.76rem;
+  cursor: pointer;
+  padding: 0.45rem 0;
+  text-decoration: underline;
+}
+
+.idle {
+  font-size: 0.84rem;
+  color: var(--muted);
+  margin: 0.4rem 0 0;
+  line-height: 1.55;
+}
+
+.error {
+  border: 1px solid var(--hairline);
+  border-left: 3px solid #b45454;
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  background: var(--glass-soft);
+}
+
+/* ── The guidance block ─────────────────────────────────────────────────── */
+/* Present on every response, so on a good page it must be almost nothing: one
+ * line of counts. `.advice` is the part that only appears when there is
+ * something to say, and it is the part that carries a border. */
+.guidance {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.countLine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  align-items: baseline;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.total {
+  color: var(--ink);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.terms {
+  color: var(--faint);
+}
+
+.advice {
+  border: 1px solid var(--hairline);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--glass-soft);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.advice b {
+  color: var(--ink);
+}
+
+.adviceList {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.8rem;
+}
+
+.adviceList li {
+  margin-top: 0.15rem;
+}
+
+/* A spelling suggestion is a control, not a note — taking it re-runs the
+ * search. It looks like a link because that is what it does. */
+.link {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--accent-deep);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.relaxRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+/* Each relaxation carries a **counted** number, measured by re-running the
+ * search without that filter. That is why it is a button with a figure on it
+ * and not a sentence: an escape route that is also a dead end never appears,
+ * so every one of these leads somewhere. */
+.relaxBtn {
+  border: 1px solid var(--accent);
+  background: var(--accent-wash);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.76rem;
+  border-radius: var(--radius-sm);
+  padding: 0.28rem 0.65rem;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease);
+}
+
+.relaxBtn:hover {
+  background: var(--accent);
+}
+
+/* ── The list and the panel ─────────────────────────────────────────────── */
+/* Side by side on a wide window, stacked on a narrow one. The panel is sticky
+ * so a chef can scroll the list against an open recipe — which is the one thing
+ * this view does that the generator does not, and the reason it is a split and
+ * not a navigation. */
+.split {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.9fr) minmax(18rem, 1.1fr);
+  gap: 1rem 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 52rem) {
+  .split {
+    grid-template-columns: 1fr;
+  }
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--glass-strong);
+  overflow: hidden;
+}
+
+/* A flat list of rows, deliberately — the generator draws cards, and five
+ * bordered cards down the left of this view would read as five invented
+ * dishes. */
+.row + .row,
+.moreRow {
+  border-top: 1px solid var(--hairline);
+}
+
+.rowBtn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  width: 100%;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+  color: var(--ink-soft);
+  transition: background var(--dur) var(--ease);
+}
+
+.rowBtn:hover {
+  background: var(--glass-soft);
+}
+
+.rowOpen .rowBtn {
+  background: var(--accent-wash);
+  box-shadow: inset 3px 0 0 var(--accent-deep);
+}
+
+.rowName {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.rowFacts {
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+.rowMatch {
+  font-size: 0.72rem;
+  color: var(--faint);
+}
+
+.rowMatch b {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.rowMatchWhere {
+  opacity: 0.8;
+}
+
+/* A **scope** line and not a warning, so it gets no accent and no red: these
+ * recipes are published, complete and correct, and only sit outside the pool
+ * generation draws parents from. */
+.scope {
+  font-size: 0.7rem;
+  color: var(--faint);
+  font-style: italic;
+}
+
+.moreRow {
+  display: block;
+}
+
+.moreBtn {
+  width: 100%;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.78rem;
+  color: var(--accent-deep);
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+}
+
+.moreBtn:hover:not(:disabled) {
+  background: var(--glass-soft);
+}
+
+/* ── The detail panel ───────────────────────────────────────────────────── */
+.panelSlot {
+  position: sticky;
+  top: 1rem;
+}
+
+.panelIdle {
+  font-size: 0.8rem;
+  color: var(--faint);
+  margin: 0;
+  padding: 0.9rem 1rem;
+  border: 1px dashed var(--hairline);
+  border-radius: var(--radius);
+  line-height: 1.55;
+}
+
+/* The left rule is the whole of the weight difference from a generated card,
+ * and it is the same rule `.cardFound` uses on the generator for a `direct`
+ * dish — one visual language for *this one is quoted*, used in both places a
+ * published recipe can appear. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  border: 1px solid var(--hairline);
+  border-left: 3px solid var(--accent-deep);
+  border-radius: var(--radius);
+  background: var(--glass-soft);
+  padding: 0.9rem 1rem;
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+}
+
+.panelHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.panelName {
+  /* Takes the slack, so the head's third child — the view's own control, a keep
+   * button in search and a remove in the collection — sits beside the close
+   * rather than in the middle of the title. */
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-title);
+  font-size: 1.08rem;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.panelClose {
+  border: 0;
+  background: none;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0 0.2rem;
+}
+
+.panelClose:hover {
+  color: var(--ink);
+}
+
+/* The one field a generated card can never carry for itself. First, and not
+ * folded into a collapsed section. */
+.sourceLine {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.sourceLine a {
+  color: var(--accent-deep);
+}
+
+.panelFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.4rem;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  padding: 0.5rem 0;
+}
+
+.panelFact {
+  display: flex;
+  flex-direction: column;
+}
+
+.panelFactLabel {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+}
+
+.panelFactValue {
+  font-size: 0.86rem;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.panelNote {
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.panelSection {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin: 0 0 0.3rem;
+}
+
+.panelSectionSub {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  color: var(--faint);
+  margin-left: 0.4rem;
+}
+
+.ingTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.ingTable td {
+  padding: 0.16rem 0;
+  vertical-align: baseline;
+  border-bottom: 1px solid var(--hairline);
+}
+
+/* The source's own number and Phase 1's grams, in two columns rather than one.
+ * They are different claims — *the publisher wrote 1 cup* and *we read that as
+ * 240 g* — and a single merged column would attribute the second to the
+ * publisher. */
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  width: 5rem;
+}
+
+.imputed {
+  font-size: 0.68rem;
+  color: var(--faint);
+  font-style: italic;
+}
+
+.withheld {
+  font-size: 0.72rem;
+  color: var(--faint);
+  margin: 0.35rem 0 0;
+  line-height: 1.45;
+}
+
+.steps {
+  margin: 0;
+  padding-left: 1.15rem;
+  font-size: 0.83rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.steps li {
+  margin-top: 0.25rem;
+}
+
+.prose {
+  font-size: 0.83rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  margin: 0;
+  white-space: pre-wrap;
+}

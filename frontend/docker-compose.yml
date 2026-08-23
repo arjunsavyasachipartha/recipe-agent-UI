@@ -1,0 +1,31 @@
+# Standalone Postgres for the demo frontend.
+#
+# This is intentionally separate from the backend's database so this frontend
+# folder stays self-contained and easy to move out later.
+#
+#   docker compose up -d        start Postgres in the background
+#   docker compose down         stop it (data is kept in the named volume)
+#   docker compose down -v      stop it AND wipe the database (clean slate)
+#
+# It publishes on host port 5433 (not 5432) so it never clashes with the
+# backend's Postgres if you ever run both at once.
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: bornbhukkad
+      POSTGRES_PASSWORD: bornbhukkad_local_pw
+      POSTGRES_DB: bornbhukkad
+    ports:
+      - "5433:5432"
+    volumes:
+      - fe_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bornbhukkad"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  fe_pgdata:

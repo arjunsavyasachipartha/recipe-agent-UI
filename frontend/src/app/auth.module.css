@@ -1,0 +1,332 @@
+.wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2rem, 6vw, 5rem);
+  padding: 1.5rem;
+  background:
+    radial-gradient(55% 55% at 12% 6%, var(--blush) 0%, transparent 55%),
+    radial-gradient(50% 50% at 90% 12%, #f7d9c8 0%, transparent 55%),
+    radial-gradient(60% 60% at 82% 96%, var(--lavender) 0%, transparent 60%),
+    radial-gradient(50% 50% at 8% 92%, #e7e0ef 0%, transparent 60%),
+    var(--warm);
+}
+
+/* ── Brand hero (wide screens only) ────────────────────── */
+.hero {
+  flex: 0 1 420px;
+  max-width: 420px;
+  animation: fadeUp 0.5s var(--ease) both;
+}
+.heroTitle {
+  font-family: var(--font-title);
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  color: var(--ink);
+  margin: 1.6rem 0 0.9rem;
+}
+.heroText {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 42ch;
+  margin-bottom: 1.6rem;
+}
+.heroList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.heroList li {
+  position: relative;
+  padding-left: 1.6rem;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+}
+.heroList li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-grad);
+  box-shadow: 0 0 0 3px var(--accent-wash);
+}
+
+/* ── Hero slides + dots ────────────────────────────────── */
+/* Two stacked pages; only the active one shows. min-height reserves room for
+   the taller slide so the dots below don't jump when switching. */
+.heroSlides {
+  position: relative;
+  margin-top: 1.4rem;
+  min-height: 400px;
+}
+.heroSlide {
+  animation: fadeUp 0.35s var(--ease) both;
+}
+.heroSlide[hidden] {
+  display: none;
+}
+
+.dots {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.4rem;
+  padding-left: 0.15rem;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--faint);
+  cursor: pointer;
+  transition: width 0.3s var(--ease), background 0.3s var(--ease);
+}
+.dot:hover {
+  background: var(--muted);
+}
+.dotActive,
+.dotActive:hover {
+  width: 22px;
+  background: var(--accent-grad);
+}
+
+/* ── "Coming soon" agents (dimmed, disabled) ───────────── */
+.soonList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.soonItem {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--glass-soft);
+  opacity: 0.55; /* the "disabled" look */
+  cursor: not-allowed;
+  user-select: none;
+}
+.soonIcon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  color: var(--muted);
+  background: var(--glass-strong);
+}
+.soonBody {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.soonName {
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.soonTag {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.soonLock {
+  flex: 0 0 auto;
+  color: var(--faint);
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  flex: 0 0 auto;
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  padding: 2.6rem 2.4rem;
+  animation: fadeUp 0.5s 0.06s var(--ease) both;
+}
+.cardBrand {
+  display: none; /* shown only when the hero is hidden (narrow screens) */
+  margin-bottom: 1.4rem;
+}
+
+@media (max-width: 860px) {
+  .hero {
+    display: none;
+  }
+  .cardBrand {
+    display: block;
+  }
+}
+
+/* Smoothly expand/collapse the restaurant-name field on mode switch */
+.collapse {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(-4px);
+  transition: max-height 0.35s var(--ease), opacity 0.28s var(--ease),
+    transform 0.35s var(--ease);
+}
+.collapseOpen {
+  max-height: 120px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Heading ───────────────────────────────────────────── */
+.title {
+  font-family: var(--font-title);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 0.35rem;
+}
+.sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.6rem;
+}
+
+/* ── Tabs ──────────────────────────────────────────────── */
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--glass-soft);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 4px;
+  margin-bottom: 1.7rem;
+}
+.tab,
+.tabActive {
+  border: none;
+  background: transparent;
+  font-size: 0.87rem;
+  font-weight: 600;
+  padding: 0.55rem 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+  color: var(--muted);
+}
+.tabActive {
+  background: var(--glass-strong);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* ── Fields ────────────────────────────────────────────── */
+.field {
+  margin-bottom: 1.05rem;
+}
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+}
+.field input {
+  width: 100%;
+  padding: 0.72rem 0.85rem;
+  font-size: 0.92rem;
+  color: var(--ink);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  background: var(--glass-soft);
+  backdrop-filter: var(--glass-blur-sm);
+  -webkit-backdrop-filter: var(--glass-blur-sm);
+  transition: border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease), background var(--dur) var(--ease);
+  font-family: inherit;
+}
+.field input::placeholder {
+  color: var(--faint);
+}
+.field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(201, 139, 107, 0.16);
+  background: var(--glass-strong);
+}
+
+/* ── Submit ────────────────────────────────────────────── */
+.submit {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--warm);
+  background: linear-gradient(180deg, rgba(66, 58, 74, 0.95), rgba(42, 36, 48, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(42, 36, 48, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transition: opacity var(--dur) var(--ease), transform 0.12s var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+.submit:hover {
+  opacity: 0.94;
+  box-shadow: 0 8px 22px rgba(42, 36, 48, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+.submit:active {
+  transform: translateY(1px);
+}
+.submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Error ─────────────────────────────────────────────── */
+.error {
+  color: #b3261e;
+  font-size: 0.83rem;
+  margin: 0.2rem 0 0.9rem;
+}
+
+/* ── Footer link ───────────────────────────────────────── */
+.foot {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+.link {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

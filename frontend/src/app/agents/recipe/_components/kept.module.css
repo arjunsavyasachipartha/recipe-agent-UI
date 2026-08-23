@@ -1,0 +1,251 @@
+/* The collection — the two lists of what a chef kept.
+ *
+ * Only what this view needs and the search view does not have. `.split`,
+ * `.panelSlot`, `.panelIdle`, `.scope` and `.error` are imported from
+ * `search.module.css` by the component rather than copied here: the saved list
+ * is the search view's list-and-panel layout with a different list in it, and
+ * two copies of that grid would drift the first time one of them was touched.
+ *
+ * What is here is the tab strip, the row's own furniture — a remove control the
+ * search rows do not have — and the two lead sentences. */
+
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* ── The two tabs ─────────────────────────────────────────────────────────
+ *
+ * Underlined rather than pilled. Pills read as a filter — *show me only these*
+ * — and these are two different lists rather than two views of one, which is
+ * the distinction the whole feature is arranged around. */
+.tabs {
+  display: flex;
+  gap: 1.25rem;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.86rem;
+  color: var(--muted);
+  padding: 0.45rem 0.1rem 0.55rem;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.tab:hover {
+  color: var(--ink-soft);
+}
+
+.tabActive {
+  color: var(--ink);
+  border-bottom-color: var(--accent-deep);
+}
+
+.tabCount {
+  font-size: 0.72rem;
+  color: var(--faint);
+  background: var(--glass-soft);
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  padding: 0.05rem 0.4rem;
+  line-height: 1.4;
+}
+
+.tabActive .tabCount {
+  color: var(--ink-soft);
+  background: var(--accent-wash);
+}
+
+/* ── Sentences ──────────────────────────────────────────────────────────── */
+.lead {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  margin: 0;
+  line-height: 1.55;
+}
+
+.lead b {
+  color: var(--ink);
+}
+
+.idle {
+  font-size: 0.84rem;
+  color: var(--muted);
+  margin: 0.4rem 0 0;
+  line-height: 1.55;
+}
+
+/* A statement of fact about the deployment, not a failure of the chef's — so it
+ * gets the quiet treatment rather than the error rule. */
+.missing {
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+  background: var(--glass-soft);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.7rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── The saved list ─────────────────────────────────────────────────────── */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--glass-strong);
+  overflow: hidden;
+}
+
+/* A flat list of rows, deliberately — the same argument the search view makes:
+ * the generator draws cards, and a column of bordered cards here would read as
+ * a column of invented dishes. */
+.row {
+  display: flex;
+  align-items: stretch;
+}
+
+.row + .row {
+  border-top: 1px solid var(--hairline);
+}
+
+.rowBtn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+  color: var(--ink-soft);
+  transition: background var(--dur) var(--ease);
+}
+
+.rowBtn:hover {
+  background: var(--glass-soft);
+}
+
+.rowOpen .rowBtn {
+  background: var(--accent-wash);
+  box-shadow: inset 3px 0 0 var(--accent-deep);
+}
+
+.rowName {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  color: var(--ink);
+  line-height: 1.25;
+}
+
+.rowFacts {
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+/* The chef's own words about why they kept it. Quoted and italic so it reads as
+ * theirs rather than as another fact the corpus supplied. */
+.rowNote {
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.rowGone {
+  font-size: 0.7rem;
+  color: var(--faint);
+}
+
+.rowDrop {
+  border: 0;
+  border-left: 1px solid var(--hairline);
+  background: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--faint);
+  padding: 0 0.7rem;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+
+.rowDrop:hover {
+  color: var(--ink);
+  background: var(--glass-soft);
+}
+
+/* ── The keep / remove control ───────────────────────────────────────────
+ *
+ * Shared by the search panel and this one, and quiet in both. Keeping a recipe
+ * is a small act of filing; a primary button would make it compete with the one
+ * thing on this product that matters, which is asking for a dish to be
+ * invented. */
+.keepBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--glass-soft);
+  font: inherit;
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+
+.keepBtn:hover {
+  color: var(--ink);
+  border-color: var(--accent-deep);
+}
+
+/* Kept. Filled, because the glyph is a bookmark and a filled bookmark is the
+ * one piece of iconography every reader already knows. */
+.keptBtn {
+  background: var(--accent-wash);
+  border-color: var(--accent-deep);
+  color: var(--ink);
+}
+
+.keptBtn svg {
+  fill: currentColor;
+}
+
+/* ── The accepted dishes ────────────────────────────────────────────────── */
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.creation {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* When it was kept, above the card rather than inside it. `ResultCard` draws the
+ * card as it was served, and a line this view added inside it would be this
+ * view editing a stored answer. */
+.keptWhen {
+  font-size: 0.72rem;
+  color: var(--faint);
+  margin: 0;
+}

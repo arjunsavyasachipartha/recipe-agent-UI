@@ -1,0 +1,117 @@
+/* Shared loading skeletons (Phase VI polish). Self-contained so any panel — Core
+   (phase2.module.css) or Manager (manager.module.css) — can drop them in. A soft
+   shimmer stands in for content while an agent call is in flight, which reads
+   calmer than a bare "Loading…" line. Honours prefers-reduced-motion. */
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+/* The shimmering block primitive. */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  background: var(--cool);
+  border-radius: var(--radius-sm);
+}
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  animation: sk-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes sk-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shimmer::after {
+    animation: none;
+  }
+}
+
+/* Screen-reader-only status text. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Card skeleton (recommend / variation / draft / forecast result) ── */
+.card {
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 1.3rem 1.4rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+/* ── Row skeleton (search rows / weight rows / forecast rows) ── */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.rowMain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1 1 auto;
+}
+
+/* ── Stat cards skeleton (dashboard summary) ── */
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+.statCard {
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ── Table skeleton (feedback log / catalog history) ── */
+.table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.tableRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.tableRow > * {
+  flex: 1 1 0;
+}

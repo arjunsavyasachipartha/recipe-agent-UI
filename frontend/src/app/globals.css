@@ -1,0 +1,222 @@
+:root {
+  /* ── Brand palette ─────────────────────────────────────── */
+  --blush: #f4ded3;        /* blush peach */
+  --lavender: #eee8ea;     /* muted lavender-gray */
+  --warm: #fff8f5;         /* warm off-white */
+  --cool: #f4f4f8;         /* cool off-white */
+
+  /* ── Derived tokens ────────────────────────────────────── */
+  --ink: #2a2430;          /* primary text / buttons */
+  --ink-soft: #574f5b;     /* secondary text */
+  --muted: #8b8390;        /* tertiary text */
+  --faint: #b4adba;        /* placeholders / hints */
+  --accent: #c98b6b;       /* warm peach accent (derived from blush) */
+
+  --radius: 5px;      /* cards, modals, larger surfaces */
+  --radius-sm: 3px;    /* buttons, inputs, chips, nested controls */
+  --radius-lg: 18px;   /* shell surfaces: rail, sidebar, content card */
+  --shadow-sm: 0 1px 2px rgba(60, 40, 45, 0.06), 0 1px 3px rgba(60, 40, 45, 0.05);
+  /* Layered elevation for the enriched shell surfaces. */
+  --shadow-lg: 0 2px 4px rgba(60, 40, 45, 0.04), 0 12px 28px rgba(60, 40, 45, 0.10),
+    0 28px 60px rgba(60, 40, 45, 0.08);
+  --hairline: rgba(90, 66, 74, 0.10);   /* crisp low-contrast divider */
+
+  /* ── Accent gradient (derived from blush→peach) ────────── */
+  --accent-deep: #b3714f;  /* deeper peach for gradients / hovers */
+  --accent-grad: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+  --accent-wash: rgba(201, 139, 107, 0.10);  /* tinted fills behind accent items */
+  --accent-glow: 0 6px 18px rgba(201, 139, 107, 0.35);
+
+  /* ── Shell layout dimensions ───────────────────────────── */
+  --rail-w: 76px;
+  --sidebar-w: 248px;
+
+  /* ── Glass (glassmorphism) ─────────────────────────────── */
+  --glass: rgba(255, 255, 255, 0.42);
+  --glass-strong: rgba(255, 255, 255, 0.6);
+  --glass-soft: rgba(255, 255, 255, 0.28);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-blur: blur(18px) saturate(160%);
+  --glass-blur-sm: blur(10px) saturate(150%);
+  --glass-shadow: 0 10px 34px rgba(60, 40, 45, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+
+  /* ── Typography ────────────────────────────────────────── */
+  --font-body: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-heading), var(--font-sans), -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  /* The heading/title typeface — the ONE place the display font is chosen.
+     Every heading uses var(--font-title); swap the loaded font in layout.js
+     (--font-ibm-plex-serif) to restyle all titles at once. */
+  --font-title: var(--font-ibm-plex-serif), var(--font-display);
+
+  /* ── Motion ────────────────────────────────────────────── */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1); /* smooth ease-out */
+  --dur: 0.28s;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--warm);
+  color: var(--ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Small-travel entrance for anything that mounts conditionally — an inline note,
+   a hint, a result box, an expanded panel. Shorter and subtler than fadeUp
+   (which is for whole cards), so these read as settling into place rather than
+   sliding in. Used from the CSS modules; the reduced-motion rule below
+   neutralises it automatically. */
+@keyframes appear {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Modal panel enter/exit — a soft rise + slight scale so it eases in and out
+   instead of popping. Paired with fadeIn/fadeOut on the backdrop. */
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes panelOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(8px) scale(0.98); }
+}
+
+/* Section swap inside the workspace content pane — a soft rise + fade so moving
+   between Recommend / Inventory / … (and between manager sections) feels like a
+   deliberate transition, not an instant jump. Applied to a wrapper KEYED by the
+   active section id so it replays on every change. */
+@keyframes sectionIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Sidebar list swap when switching between Core and Manager modes. */
+@keyframes navIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Shake — nudges an incomplete field/row so the user knows to fill it first.
+   Global so the keyframe name resolves when referenced from a CSS module. */
+@keyframes bb-shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-6px); }
+  30% { transform: translateX(6px); }
+  45% { transform: translateX(-5px); }
+  60% { transform: translateX(4px); }
+  75% { transform: translateX(-2px); }
+}
+
+/* Modal enter/exit animations live HERE (global scope), not in the CSS modules.
+   Reason: a keyframe-name referenced from inside a *.module.css can get scoped
+   away from these global @keyframes (notably under Turbopack), so the animation
+   silently doesn't run. Keeping the rules and the keyframes in the same global
+   file guarantees they resolve. The <Modal> component always tags its overlay
+   with .bb-modal-overlay and its panel with .bb-modal-panel; each modal's LOOK
+   still comes from its own CSS module. */
+.bb-modal-overlay {
+  animation: fadeIn 0.24s var(--ease) both;
+}
+.bb-modal-overlay[data-closing="true"] {
+  animation: fadeOut 0.2s var(--ease) both;
+}
+.bb-modal-panel {
+  animation: panelIn 0.3s var(--ease) both;
+}
+.bb-modal-overlay[data-closing="true"] .bb-modal-panel {
+  animation: panelOut 0.2s var(--ease) both;
+}
+
+/* ── Full-page loader (route transitions / auth checks) ──────────────────────
+   Global (not a CSS module) so the spin keyframe always resolves. Shown by the
+   <PageLoader> component whenever a page is redirecting or checking the session,
+   so navigation fades through a branded loading screen instead of a blank flash. */
+@keyframes bb-spin {
+  to { transform: rotate(360deg); }
+}
+.bb-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background:
+    radial-gradient(45% 45% at 92% 4%, var(--blush) 0%, transparent 55%),
+    radial-gradient(45% 45% at 6% 10%, #f7d9c8 0%, transparent 55%),
+    radial-gradient(55% 55% at 80% 92%, var(--lavender) 0%, transparent 60%),
+    radial-gradient(45% 45% at 15% 96%, #e7e0ef 0%, transparent 60%),
+    var(--warm);
+  /* No fade-IN on the overlay itself: it is a full-page opaque cover whose job
+     is to hide the page underneath until the session check resolves. Fading it
+     in from opacity:0 let the sign-in form flash through for ~250ms on first
+     load (the reported flicker). The inner content still eases in via panelIn. */
+}
+.bb-loader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: panelIn 0.35s var(--ease) both;
+}
+.bb-loader-ring {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 3px solid rgba(201, 139, 107, 0.22);
+  border-top-color: var(--accent);
+  animation: bb-spin 0.8s linear infinite;
+}
+.bb-loader-brand {
+  font-family: var(--font-title);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.bb-loader-msg {
+  font-size: 0.9rem;
+  color: var(--muted);
+  min-height: 1.2em;
+  transition: opacity var(--dur) var(--ease);
+}
+
+/* Users who prefer reduced motion get instant, non-animated UI. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+a { color: inherit; }
+
+button { font-family: inherit; }

@@ -1,0 +1,1080 @@
+/* V4 Phase 5 Day 3 — the one screen.
+ *
+ * The layout, and only the layout. Every colour, radius, shadow, font and
+ * easing below is a token from `globals.css`, which this phase does not touch:
+ * this is a subtraction and a re-layout inside a design system that already
+ * exists, and the fastest way to make it look like a different product would be
+ * to start inventing values here.
+ *
+ * ## The shape of the screen, and the risk it is answering
+ *
+ * The phase's own warning: *twelve controls in a column is a tax return, not a
+ * tool.* So the column is not twelve rows. It is five bands, in the order a chef
+ * thinks:
+ *
+ *   1. the pantry      — the only required field, and the only one given room
+ *   2. the dish        — a compact grid of dropdowns, three or four to a row
+ *   3. the sentence    — one line of free text
+ *   4. the numbers     — the dial and the count, side by side
+ *   5. the button
+ *
+ * Bands 2 to 4 are visually quieter than band 1 — smaller labels, tighter rows,
+ * no group headings shouting at a chef who has already decided what they want.
+ * The screen says *everything below the pantry is optional* once, plainly, at
+ * the top of band 2, instead of marking eight fields "optional".
+ *
+ * `.optionalNote` is that sentence and it appears exactly once. Repeating it per
+ * field is the failure it exists to prevent.
+ */
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Band 1: the pantry ─────────────────────────────────────────────────── */
+/* Given a panel of its own — a border and a tint — because it is the one field
+ * that has to be filled in and the one the chef returns to. Everything else on
+ * the screen sits on the plain surface. */
+.pantry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.95rem 1rem 0.85rem;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--glass-soft);
+}
+
+.pantryHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.pantryLabel {
+  font-family: var(--font-title);
+  font-size: 1.02rem;
+  color: var(--ink);
+}
+
+.pantryCount {
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.ingRow {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.ingRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.chipWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+/* A pantry chip carries two controls, so it lays its own contents out rather
+ * than borrowing the shared `.chip` pill, which is a plain span. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--glass-strong);
+  font-size: 0.8rem;
+  color: var(--ink);
+  transition: opacity var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+/* Off for this dish. Still visible, and visibly not counted — a chip that
+ * vanished would leave the chef wondering where it went. */
+.chipOff {
+  opacity: 0.45;
+  border-style: dashed;
+}
+
+.chipOff .chipName {
+  text-decoration: line-through;
+}
+
+.chipName {
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.28rem 0.15rem 0.28rem 0.55rem;
+}
+
+.chipX {
+  border: 0;
+  background: none;
+  padding: 0.28rem 0.5rem 0.28rem 0.15rem;
+  line-height: 1;
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.5;
+}
+
+.chipX:hover {
+  opacity: 1;
+  color: #b45454;
+}
+
+.pantryHint {
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.pantryWarn {
+  font-size: 0.78rem;
+  color: #b45454;
+  margin: 0;
+}
+
+/* ── Band 2: the dish ───────────────────────────────────────────────────── */
+/* A grid and not a stack of labelled rows. Each cell is one control; the grid
+ * decides how many fit across, so a narrow window degrades to two columns and
+ * then to one without anything being rewritten. */
+.band {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.optionalNote {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.optionalNote b {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 0.7rem 0.75rem;
+  align-items: start;
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  min-width: 0;
+}
+
+/* Spans the full grid width — the allergen row, which is a chip list rather
+ * than a control of a fixed size. */
+.cellWide {
+  grid-column: 1 / -1;
+}
+
+.cellLabel {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+/* A required control says so once, quietly, beside its own label rather than in
+ * a validation message the chef only meets after pressing the button. */
+.req {
+  color: var(--accent-deep);
+  font-weight: 600;
+}
+
+.subRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+  padding-top: 0.1rem;
+}
+
+.subRow input {
+  accent-color: var(--accent);
+}
+
+/* Allergen chips are buttons, not pills: they need the pointer and the pressed
+ * state a plain span has no reason to carry. */
+.toggleWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.toggle {
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--glass-strong);
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 0.78rem;
+  padding: 0.26rem 0.6rem;
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.toggle:hover {
+  border-color: var(--ink-soft);
+}
+
+.toggleOn {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+  color: var(--ink);
+}
+
+/* ── Band 3: the sentence ───────────────────────────────────────────────── */
+.sentence {
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--glass-strong);
+  padding: 0.55rem 0.7rem;
+  resize: vertical;
+  min-height: 2.6rem;
+}
+
+.sentence:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.sentenceFoot {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  color: var(--faint);
+}
+
+.overLimit {
+  color: #b45454;
+}
+
+/* ── Band 4: the numbers ────────────────────────────────────────────────── */
+.numbers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.9rem 1.25rem;
+  align-items: start;
+}
+
+.dialHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.dialValue {
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.range {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.dialSays {
+  font-size: 0.74rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ── Day 5: the dial's stops and its live count ─────────────────────────── */
+/* The control reads as words. `.dialValue` still carries the percentage — it is
+ * what the request sends — but it is the small grey thing at the end of the
+ * row, and `.dialLabel` is what the eye lands on. */
+.dialLabel {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+/* Five stops named along the track, each one clickable. A row and not a
+ * `datalist`: ticks cannot be labelled, and an unlabelled tick under a control
+ * whose whole problem is that it does not say what it does would be decoration.
+ * `flex: 1` with `min-width: 0` so five labels share the width evenly and wrap
+ * their own text rather than pushing the track wider than its column. */
+.stopRow {
+  display: flex;
+  gap: 2px;
+  margin-top: -0.1rem;
+}
+
+.stop {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  border: 0;
+  background: none;
+  padding: 0.2rem 0.1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--faint);
+  font: inherit;
+  text-align: center;
+  transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+
+.stop:hover {
+  background: var(--glass-soft);
+  color: var(--ink-soft);
+}
+
+.stopOn {
+  color: var(--ink);
+}
+
+.stopName {
+  font-size: 0.63rem;
+  line-height: 1.15;
+}
+
+/* The count under each stop. Tabular so the numbers do not shuffle sideways as
+ * a chef adds ingredients, which is the one thing that would make a live figure
+ * feel unreliable. */
+.stopCount {
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  color: inherit;
+  opacity: 0.75;
+}
+
+.stopOn .stopName {
+  font-weight: 600;
+}
+
+.stopOn .stopCount {
+  opacity: 1;
+  color: var(--accent-deep);
+}
+
+.dialReach {
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+  margin: 0;
+  min-height: 2.2em; /* holds its own height so the button does not jump when
+                        the sentence changes length */
+  transition: opacity var(--dur) var(--ease);
+}
+
+/* A count being re-taken. Dimmed rather than replaced: the last true number is
+ * better company than a spinner where a number was. */
+.dialStale {
+  opacity: 0.5;
+}
+
+/* ── Band 5: the button ─────────────────────────────────────────────────── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.actionNote {
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+/* ── Notes and errors ───────────────────────────────────────────────────── */
+.note {
+  border: 1px solid var(--hairline);
+  border-left-width: 3px;
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  background: var(--glass-soft);
+}
+
+.noteErr {
+  border-left-color: #b45454;
+}
+
+.noteWarn {
+  border-left-color: var(--accent);
+}
+
+.noteTitle {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.note ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.note li {
+  margin-top: 0.15rem;
+}
+
+/* ── Days 7-9: the answer ───────────────────────────────────────────────── */
+/* The cards, the collapsed account of what was refused, and the empty page.
+ *
+ * All of it lives here rather than in `synthesis.module.css`, which is V3's and
+ * goes out on Day 11 with the V3 workspace. Reusing it would mean the new
+ * screen depending on a stylesheet that is scheduled for deletion. The *values*
+ * are the same tokens either file uses, so the card looks like the card a chef
+ * used last week with the money gone and the pantry marks added. */
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  border-top: 1px solid var(--hairline);
+  padding-top: 1.1rem;
+}
+
+.resultsHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.resultsTitle {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* The backend's own shortfall sentence, rendered as it was written. */
+.countSentence {
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.cardList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* ── One dish ───────────────────────────────────────────────────────────── */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: var(--glass-strong);
+  padding: 1rem 1.1rem;
+}
+
+/* A found dish is not an invented one and must not look like one. The left rule
+ * is the whole of the difference in weight: it reads as *this one is quoted*
+ * without turning it into a lesser card, which it is not. */
+.cardFound {
+  border-left: 3px solid var(--accent-deep);
+  background: var(--glass-soft);
+}
+
+.cardHead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.cardTitleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.cardName {
+  font-family: var(--font-title);
+  font-size: 1.08rem;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.lane {
+  flex: none;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  padding: 0.16rem 0.45rem;
+  white-space: nowrap;
+}
+
+.laneFound {
+  color: var(--accent-deep);
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+
+.cardMeta {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.laneHint {
+  color: var(--faint);
+}
+
+.foundNote {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  background: var(--accent-wash);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.6rem;
+  margin: 0;
+}
+
+.whySentence {
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.factRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.5rem;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  padding: 0.5rem 0;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+}
+
+.factLabel {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+}
+
+.factValue {
+  font-size: 0.88rem;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.matchLine {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* Ingredients and method side by side on a wide card, stacked on a narrow one.
+ * They are read together — a quantity is looked up while a step is being read —
+ * and putting the method under a 20-row table means scrolling between them. */
+.cardBody {
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.85fr) minmax(16rem, 1.15fr);
+  gap: 0.9rem 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 46rem) {
+  .cardBody {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sectionLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin: 0 0 0.3rem;
+}
+
+.sectionLabelSub {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  color: var(--faint);
+  margin-left: 0.4rem;
+}
+
+.ingTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+.ingTable td {
+  padding: 0.16rem 0;
+  vertical-align: baseline;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ingTag {
+  text-align: right;
+  width: 4.2rem;
+}
+
+/* The three states. `to buy` is the only one that gets the accent, because it
+ * is the only one that asks the chef to do something. */
+.tagBuy {
+  font-size: 0.66rem;
+  color: var(--accent-deep);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 0.02rem 0.3rem;
+  white-space: nowrap;
+}
+
+.tagYours {
+  font-size: 0.66rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.tagStaple {
+  font-size: 0.66rem;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.ingLegend {
+  font-size: 0.7rem;
+  color: var(--faint);
+  margin: 0.35rem 0 0;
+  line-height: 1.45;
+}
+
+.methodList {
+  margin: 0;
+  padding-left: 1.15rem;
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.methodList li {
+  margin-top: 0.25rem;
+}
+
+.timeBasis {
+  font-size: 0.7rem;
+  color: var(--faint);
+  margin: 0;
+}
+
+/* ── Collapsed sections: the card's evidence, and Day 8's account ───────── */
+.evidence,
+.honest {
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--glass-soft);
+  font-size: 0.8rem;
+}
+
+.evidence > summary,
+.honest > summary {
+  cursor: pointer;
+  padding: 0.45rem 0.7rem;
+  color: var(--ink-soft);
+  font-weight: 600;
+  font-size: 0.76rem;
+  list-style-position: inside;
+}
+
+.honest > summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.honestCount {
+  font-weight: 400;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.evidenceBody,
+.honestBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0.2rem 0.7rem 0.7rem;
+  border-top: 1px solid var(--hairline);
+}
+
+.parents,
+.decisions,
+.measures {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+}
+
+.parents li,
+.decisions li,
+.measures li {
+  margin-top: 0.2rem;
+}
+
+.parents a {
+  color: var(--accent-deep);
+}
+
+.parentRole,
+.parentFamily {
+  font-size: 0.68rem;
+  color: var(--faint);
+}
+
+.parentRole {
+  margin-right: 0.35rem;
+}
+
+.parentFamily {
+  margin-left: 0.35rem;
+}
+
+.decisionWhy {
+  display: block;
+  color: var(--faint);
+  font-size: 0.72rem;
+}
+
+/* ── Day 8: the funnel and the refused list ─────────────────────────────── */
+.funnel,
+.notShown {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+}
+
+.funnel th,
+.funnel td,
+.notShown td {
+  padding: 0.2rem 0.4rem 0.2rem 0;
+  text-align: left;
+  border-bottom: 1px solid var(--hairline);
+  vertical-align: baseline;
+}
+
+.funnel th {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--faint);
+  font-weight: 600;
+}
+
+/* A row that actually dropped something. The eye should find the stage that
+ * emptied the page without reading ten numbers. */
+.funnelHit td {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.funnelZero {
+  color: var(--faint);
+  font-weight: 400;
+}
+
+.notShownWhy {
+  white-space: nowrap;
+}
+
+.notShownDetail,
+.alsoFailed {
+  color: var(--faint);
+}
+
+/* ── Day 9: nothing came back ───────────────────────────────────────────── */
+/* Not an error box. An unanswerable request is an answer, and a page that turns
+ * red at a chef who set a strict dial has told them they did something wrong. */
+.noteEmpty {
+  border-left-color: var(--accent);
+}
+
+.fixRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 0.55rem;
+}
+
+.fixBtn {
+  border: 1px solid var(--accent);
+  background: var(--accent-wash);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.78rem;
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease);
+}
+
+.fixBtn:hover {
+  background: var(--accent);
+}
+
+.fixNote {
+  font-size: 0.74rem;
+  color: var(--muted);
+  margin: 0.35rem 0 0;
+}
+
+/* ── Day 6: the sentence, read back ─────────────────────────────────────── */
+/* Sits under the box it is about rather than in the results, because it is
+ * feedback on an input. Quiet — a panel with a border and a tint, no heading
+ * weight — since it appears every time a sentence is sent and a loud block that
+ * appears every time becomes a block nobody reads. */
+.echo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--glass-soft);
+  padding: 0.6rem 0.75rem;
+  margin-top: 0.15rem;
+}
+
+.echoHead {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.echoStale {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--faint);
+}
+
+/* The chef's own sentence, marked in place. Slightly larger than the notes
+ * around it because it is the thing being talked about. */
+.echoSentence {
+  font-size: 0.88rem;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* V4 P-VI Day 1. Whether the sentence fenced or nudged. Sits directly under the
+ * sentence it describes, quieter than the sentence and louder than the notes
+ * below it — it is a reading of the chef's words, not another note about them. */
+.echoStrength {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0.45rem 0 0;
+  line-height: 1.5;
+}
+
+.echoStrength b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* What landed. An underline and not a highlight block: a wash of colour behind
+ * every second word makes a sentence harder to read, which defeats the point of
+ * showing the sentence. */
+.markUsed {
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 1px;
+}
+
+/* What did not. Dotted, and greyed — visibly *not* the same kind of mark, for
+ * anyone who cannot tell the two colours apart. */
+.markUnused {
+  border-bottom: 2px dotted var(--faint);
+  color: var(--muted);
+  padding-bottom: 1px;
+}
+
+.echoBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.echoBlockHead {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.echoList {
+  margin: 0;
+  padding-left: 1.05rem;
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+}
+
+.echoList li {
+  margin-top: 0.12rem;
+}
+
+.echoPhrase {
+  color: var(--ink);
+}
+
+/* The registry value the phrase became — monospace, because it is an id and a
+ * chef checking `richness=light` against `richness=rich` is reading characters
+ * rather than words. */
+.echoValue {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: var(--accent-deep);
+}
+
+.echoDoes {
+  color: var(--muted);
+}
+
+.echoWide {
+  font-size: 0.74rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ── Day 11: the verdict ────────────────────────────────────────────────── */
+/* Under the evidence, at the foot of the card. Quiet — one line, two small
+ * buttons — because it appears on every card and a loud block that appears
+ * every time becomes a block nobody reads. It is the same argument the echo's
+ * styling makes, applied to the one control on this screen that asks the chef
+ * for something rather than telling them something. */
+.verdict {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--hairline);
+  padding-top: 0.6rem;
+}
+
+.verdictAsk {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.verdictBtn {
+  border: 1px solid var(--hairline);
+  background: var(--glass-strong);
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 0.78rem;
+  border-radius: var(--radius-sm);
+  padding: 0.24rem 0.7rem;
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+
+.verdictBtn:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+
+.verdictBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* The reason picker is the same width as a dropdown elsewhere on the screen
+ * rather than the full card: a rejection reason is a short label and a control
+ * stretched across a card reads as the main event, which it is not. */
+.verdictReason {
+  min-width: 11rem;
+  flex: 0 1 13rem;
+}
+
+.verdictNote {
+  flex: 1 1 12rem;
+  min-width: 0;
+  font-family: inherit;
+  font-size: 0.8rem;
+  color: var(--ink);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--glass-strong);
+  padding: 0.3rem 0.55rem;
+}
+
+.verdictNote:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.verdictCancel {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.76rem;
+  color: var(--muted);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Logged, and not undoable from here — a verdict is a measurement of what the
+ * chef thought when they read the card. */
+.verdictDone {
+  border-top: 1px solid var(--hairline);
+  padding-top: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.verdictErr {
+  font-size: 0.76rem;
+  color: #b45454;
+}

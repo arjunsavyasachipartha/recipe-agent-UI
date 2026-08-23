@@ -1,0 +1,1458 @@
+/* Shared styles for the core-loop components — Phase II (inventory editor,
+   inventory panel, recommend panel + cards) AND Phase III (search, variations,
+   create). These render INSIDE the workspace glass panel, so surfaces here are
+   kept light and layered on top of it. */
+
+/* The vertical rhythm for a panel's major blocks (context bar, run row,
+   results, invent box…). Everything in the workspace hangs off this. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.85rem;
+}
+
+/* ── Appear ──────────────────────────────────────────────────────────────────
+   Anything that mounts CONDITIONALLY (a note, a hint, a result box, an expanded
+   panel) eases in rather than popping. Whole cards use the bigger `fadeUp`;
+   `appear` is the shorter, smaller-travel version for inline text and boxes.
+   Both keyframes are global (globals.css), as is the reduced-motion override. */
+.saveHint,
+.noteOk,
+.noteErr,
+.warnings,
+.confirmedBox,
+.submittedBox,
+.feedbackBox,
+.scoreGrid,
+.cookForm,
+.empty,
+.fieldHint,
+.modeHint,
+.inventBox,
+.badge,
+.badgeBatch {
+  animation: appear 0.22s var(--ease) both;
+}
+
+/* ── Form controls ───────────────────────────────────────── */
+.input,
+.inputNum {
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.6rem;
+  width: 100%;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.inputNum {
+  width: 100%;
+  max-width: 7rem;
+}
+.input:focus,
+.inputNum:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(201, 139, 107, 0.15);
+}
+
+/* Price cell: the number input plus a "/ kg" (or /l, /pcs) basis suffix so the
+   price's unit is always explicit. */
+.priceCell {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.priceBasis {
+  font-size: 0.78rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+
+/* ── Ingredient autocomplete (custom, styled dropdown) ───── */
+.combo {
+  position: relative;
+  width: 100%;
+}
+.comboMenu {
+  z-index: 60;
+  margin: 0;
+  list-style: none;
+  max-height: 258px;
+  overflow-y: auto;
+  padding: 0.3rem;
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  animation: fadeIn 0.14s var(--ease) both;
+}
+.comboOption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.88rem;
+  padding: 0.42rem 0.55rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease);
+}
+.comboOptionActive {
+  background: var(--accent-wash);
+}
+.comboName {
+  text-transform: capitalize;
+}
+.comboCat {
+  flex: 0 0 auto;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+.comboCheck {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-weight: 700;
+}
+.inlineForm .combo {
+  flex: 1 1 180px;
+}
+
+/* ── Custom <select> / date triggers (look like .input, act as buttons) ──── */
+.ddTrigger,
+.dateTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  color: var(--ink);
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.6rem;
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.ddTrigger:hover,
+.dateTrigger:hover {
+  border-color: var(--accent);
+}
+.ddTrigger:focus-visible,
+.dateTrigger:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(201, 139, 107, 0.15);
+}
+/* the chevron on the select trigger */
+.ddTrigger::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 13px;
+  height: 13px;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='14'%20height='14'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%238b8390'%20stroke-width='2.2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M6%209l6%206%206-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.dateTrigger svg {
+  flex: 0 0 auto;
+  color: var(--muted);
+}
+.ddValue {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ddPlaceholder {
+  color: var(--faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Calendar popover ────────────────────────────────────── */
+.calPop {
+  z-index: 60;
+  width: 280px;
+  max-width: calc(100vw - 1.5rem);
+  padding: 0.8rem;
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  animation: fadeIn 0.14s var(--ease) both;
+}
+.calHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+.calMonth {
+  font-family: var(--font-title);
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.calNav {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  color: var(--ink-soft);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.calNav:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.calGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.calDow {
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--faint);
+  padding-bottom: 0.35rem;
+}
+.calCell {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.84rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.calCell:hover {
+  background: var(--accent-wash);
+}
+.calMuted {
+  color: var(--faint);
+}
+.calDisabled,
+.calDisabled:hover {
+  color: var(--faint);
+  opacity: 0.35;
+  background: transparent;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+.calToday {
+  border-color: rgba(201, 139, 107, 0.5);
+  font-weight: 700;
+}
+.calSelected,
+.calSelected:hover {
+  background: var(--accent-grad);
+  color: var(--warm);
+  font-weight: 700;
+  box-shadow: var(--accent-glow);
+}
+.calFoot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--hairline);
+}
+.calTodayBtn {
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btnPrimary,
+.btnGhost,
+.btnDanger {
+  font-family: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease),
+    color var(--dur) var(--ease), transform 0.12s var(--ease), opacity var(--dur) var(--ease);
+}
+.btnPrimary {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--warm);
+  box-shadow: 0 6px 16px rgba(201, 139, 107, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.btnPrimary:hover:not(:disabled) {
+  opacity: 0.92;
+}
+.btnPrimary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btnGhost {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-strong);
+  color: var(--ink);
+}
+.btnGhost:hover:not(:disabled) {
+  border-color: var(--ink-soft);
+}
+.btnDanger {
+  border: 1px solid #c76b6b;
+  background: #c76b6b;
+  color: var(--warm);
+}
+.btnDanger:hover:not(:disabled) {
+  opacity: 0.92;
+}
+.btnPrimary:disabled,
+.btnGhost:disabled,
+.btnDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.linkBtn {
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Section headings / hints ────────────────────────────── */
+.sectionTitle {
+  font-family: var(--font-title);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+.sectionHint {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.9rem;
+  max-width: 65ch;
+}
+/* Compact note shown directly under a context-bar field (e.g. the weather /
+   meal-time availability hints). No bottom margin — the field's own flex gap
+   handles spacing so it doesn't inflate the column height. */
+.fieldHint {
+  font-size: 0.72rem;
+  line-height: 1.3;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ── Inventory table ─────────────────────────────────────── */
+.tableScroll {
+  overflow-x: auto;
+  margin-bottom: 0.75rem;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  min-width: 640px;
+}
+.table th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--muted);
+  padding: 0 0.5rem 0.5rem;
+  white-space: nowrap;
+}
+.table td {
+  padding: 0.25rem 0.5rem 0.5rem 0;
+  vertical-align: middle;
+}
+.table td:first-child {
+  min-width: 180px;
+}
+.colNum {
+  width: 8rem;
+}
+.colUnit {
+  width: 5rem;
+}
+.colDate {
+  width: 10rem;
+}
+/* Wiggle an incomplete field + flag it red, so it's clear you must fill it
+   before adding another item. Applied to the field itself (transform on a <tr>
+   is unreliable), so it always animates. */
+.wiggle {
+  animation: bb-shake 0.42s var(--ease) both;
+}
+.invalidField,
+.invalidField:focus {
+  border-color: #c76b6b !important;
+  box-shadow: 0 0 0 3px rgba(199, 107, 107, 0.16) !important;
+}
+.rowDel {
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  color: var(--muted);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.rowDel:hover {
+  color: #c76b6b;
+  border-color: #c76b6b;
+}
+
+/* ── Empty states ────────────────────────────────────────── */
+/* Empty state. Children are centred as BLOCKS (align-items), not just as text:
+   .sectionHint carries a max-width, so with text-align alone its box sits flush
+   left and its centred text reads as off-centre. */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+  padding: 2.4rem 1.25rem;
+  border: 1px dashed var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--glass-soft);
+}
+/* The gap owns the spacing here — drop any margins the children bring with them
+   (.sectionHint / .emptyText are also used outside this box). */
+.empty > * {
+  margin: 0;
+  max-width: 52ch;
+}
+.emptyText {
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+/* ── Disclosures (received / replace) ────────────────────── */
+.disclosure {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: var(--glass);
+  padding: 0.25rem 1rem;
+}
+.summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--ink);
+  padding: 0.65rem 0;
+  list-style-position: inside;
+}
+.disclosureBody {
+  padding: 0.5rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.inlineForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+.inlineForm .input {
+  flex: 1 1 180px;
+  width: auto;
+}
+.parseNote {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.confirmRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+.warnText,
+.warnings {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+/* ── Notes ───────────────────────────────────────────────── */
+.noteOk {
+  font-size: 0.85rem;
+  color: #3d7a5a;
+  font-weight: 600;
+}
+.noteErr {
+  font-size: 0.85rem;
+  color: #b45454;
+  font-weight: 600;
+}
+
+/* ── Recommend context bar ───────────────────────────────── */
+.contextBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  /* Top-align so a validation hint under Weather/Meal-time only grows its own
+     column downward — it must not push the other fields (Date, City, Max
+     results) off the shared top edge. */
+  align-items: flex-start;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1 1 160px;
+  min-width: 140px;
+}
+.fieldNarrow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 0 0 auto;
+  width: 8rem;
+}
+.label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.toggleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--ink);
+  cursor: pointer;
+}
+.switch input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.runRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--glass-border);
+}
+.stockNote {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+.warnings {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(201, 139, 107, 0.08);
+  border: 1px solid rgba(201, 139, 107, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+/* ── Result cards ────────────────────────────────────────── */
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+/* One card = one vertical rhythm. Children are spaced by this single `gap`
+   rather than each carrying its own margin-bottom (which is what made the card
+   read as cramped and uneven). Anything inside the card should therefore NOT
+   set its own margin-bottom — add to the gap here instead.
+   NOTE: .cardImage bleeds to the card edges using negative margins that mirror
+   this padding — keep the two in sync. */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.05rem;
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.6rem;
+  box-shadow: var(--shadow-sm);
+  animation: fadeUp 0.3s var(--ease) both;
+}
+.cardHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+.cardName {
+  font-family: var(--font-title);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.cardMeta {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+/* Finished-dish photo — bleeds to the card edges under the top rounded
+   corners (negative margins cancel the card padding). */
+/* Bleeds to the card's edges: the negative margins cancel .card's padding
+   (1.5rem top / 1.6rem sides) and the width adds both side paddings back.
+   No bottom margin — the card's own gap spaces it from the title. */
+.cardImage {
+  display: block;
+  width: calc(100% + 3.2rem);
+  height: 190px;
+  object-fit: cover;
+  margin: -1.5rem -1.6rem 0;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--glass);
+  flex-shrink: 0;
+}
+.explanation {
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+.chefTip {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  background: rgba(201, 139, 107, 0.08);
+  border-left: 3px solid var(--accent);
+  padding: 0.6rem 0.85rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.chefTipLabel {
+  font-weight: 700;
+  color: var(--accent);
+  margin-right: 0.3rem;
+}
+
+/* Ingredient breakdown */
+.breakdown {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.15rem 1.4rem;
+}
+.bdBlock {
+  font-size: 0.86rem;
+}
+.bdLabel,
+.bdLabelSoft {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+.bdLabelSoft {
+  color: var(--accent);
+}
+.bdList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.32rem;
+  color: var(--ink);
+  line-height: 1.45;
+}
+.bdList li {
+  text-transform: capitalize;
+}
+.estCost {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.subNote {
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-transform: none;
+}
+
+/* Save-to-wishlist toggle in a card header (pushed to the right). */
+.saveBtn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.24rem 0.6rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease),
+    background var(--dur) var(--ease);
+}
+.saveBtn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.saveBtnOn {
+  color: var(--accent);
+  border-color: rgba(201, 139, 107, 0.4);
+  background: rgba(201, 139, 107, 0.1);
+}
+
+/* Wishlist rows: a per-row action cluster on the right of a .searchRow. */
+.rowActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Recipe id + quick actions row (copy id, jump to variations). */
+.idRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+.idLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+}
+/* Recipe ids can be very long (e.g. manipuri_style_karotkhabi_kanghou_recipe_
+   bitter_gourd_potato_stir_fry). Truncate with an ellipsis on a single line
+   instead of letting it wrap across three. The full id stays in the element's
+   title tooltip, and "Copy id" always copies the whole thing. */
+.recipeId {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  color: var(--ink);
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 0.16rem 0.5rem;
+  max-width: 24ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.idBtn {
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.18rem 0.55rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.idBtn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* "View recipe" trigger row (the card's own gap spaces it). */
+.prepWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.prepList {
+  margin-top: 0.45rem;
+  padding-left: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+.prepList li {
+  padding-left: 0.25rem;
+}
+.sourceLink {
+  display: inline-block;
+  margin-top: 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+.sourceLink:hover {
+  text-decoration: underline;
+}
+
+/* Why this? score bars */
+/* Plain block on purpose: .scoreGrid must stay full-width for its
+   auto-fit/1fr columns, so this must NOT become a flex column with
+   align-items:flex-start. Spacing below comes from the card's gap. */
+.scoreWrap {
+  display: block;
+}
+.whyBtn {
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.whyBtn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.scoreGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.4rem 1.2rem;
+  margin-top: 0.75rem;
+}
+.scoreRow {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+.scoreLabel {
+  color: var(--ink-soft);
+}
+.scoreBar {
+  height: 7px;
+  background: var(--cool);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.scoreFill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--blush), var(--accent));
+  border-radius: 999px;
+}
+
+/* Card actions / confirm / feedback */
+.cardActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+.cookForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+.cookLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.confirmedBox {
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.feedbackBox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.fbButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Inline "invent a new dish" (/create) block, shown under the recommendations. */
+.inventBox {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-top: 1.6rem;
+  border-top: 1px dashed var(--glass-border);
+}
+.inventHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.inventTitle {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.2rem;
+}
+
+/* ══ Phase III — Discovery & creation ═══════════════════════════════════════ */
+
+/* A one-line search bar: grows the query input, keeps n + button compact. */
+.searchBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+.searchBar .input {
+  flex: 1 1 260px;
+  width: auto;
+}
+
+/* ── Search results ──────────────────────────────────────── */
+.searchList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.searchRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  animation: fadeUp 0.3s var(--ease) both;
+}
+.searchMain {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+.searchName {
+  font-weight: 700;
+  color: var(--ink);
+  text-transform: capitalize;
+}
+.searchMeta {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+/* Similarity as a compact pill (0–1 → %). */
+.simBadge {
+  flex: 0 0 auto;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(201, 139, 107, 0.12);
+  border: 1px solid rgba(201, 139, 107, 0.25);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  white-space: nowrap;
+}
+
+/* A search hit = compact row + an expandable detail region. The card chrome
+   lives on this WRAPPER so the expanded recipe sits inside the same card as the
+   row it belongs to. .searchRow keeps its own chrome for standalone uses (the
+   Wishlist renders bare rows), so it's only reset when nested in here. */
+.searchItem {
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  animation: fadeUp 0.3s var(--ease) both;
+  transition: border-color 0.18s var(--ease);
+}
+.searchItemOpen {
+  border-color: rgba(201, 139, 107, 0.45);
+}
+.searchItem .searchRow {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  animation: none;
+}
+/* Smooth accordion reveal: the detail is always mounted and we animate the
+   grid track from 0fr → 1fr, so the card grows to fit its content instead of
+   snapping to full height with the content still invisible. That snap + fade
+   was the flicker / empty-margin flash on "View more". */
+.searchReveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.26s var(--ease);
+}
+.searchRevealOpen {
+  grid-template-rows: 1fr;
+}
+.searchRevealInner {
+  overflow: hidden;
+  min-height: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .searchReveal {
+    transition: none;
+  }
+}
+
+/* The expanded full recipe — photo, ingredient lines, method. */
+.searchDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  padding: 1.1rem 0.9rem;
+  border-top: 1px solid var(--glass-border);
+}
+/* Tweak action lives at the foot of the revealed detail, not the compact row. */
+.searchDetailActions {
+  display: flex;
+  justify-content: flex-end;
+}
+.searchImage {
+  display: block;
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  background: var(--glass);
+}
+
+/* ── Variation cards ─────────────────────────────────────── */
+.varCard {
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem;
+  box-shadow: var(--shadow-sm);
+  animation: fadeUp 0.3s var(--ease) both;
+}
+.varTitle {
+  font-family: var(--font-title);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+.varDesc {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin-bottom: 0.6rem;
+}
+.varReason {
+  font-size: 0.84rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* Ingredient-change chips (add / remove / swap). */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.chip {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  text-transform: capitalize;
+}
+.chipAdd {
+  color: #3d7a5a;
+  background: rgba(61, 122, 90, 0.1);
+  border-color: rgba(61, 122, 90, 0.25);
+}
+.chipRemove {
+  color: #b45454;
+  background: rgba(180, 84, 84, 0.1);
+  border-color: rgba(180, 84, 84, 0.25);
+}
+.chipSwap {
+  color: var(--accent);
+  background: rgba(201, 139, 107, 0.1);
+  border-color: rgba(201, 139, 107, 0.25);
+}
+
+/* ── Create: the draft & its safety warning ──────────────── */
+.warnBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #8a5a2b;
+  background: rgba(224, 168, 79, 0.14);
+  border: 1px solid rgba(224, 168, 79, 0.4);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.8rem;
+}
+.draftCard {
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 1.3rem 1.4rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  animation: fadeUp 0.3s var(--ease) both;
+}
+.draftInstructions {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+/* Ingredient name chips (no quantities yet — filled in at review). */
+.ingChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.ingChip {
+  font-size: 0.82rem;
+  color: var(--ink);
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 0.2rem 0.55rem;
+  text-transform: capitalize;
+}
+/* Estimated tags. */
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.tag {
+  font-size: 0.76rem;
+  color: var(--muted);
+  background: var(--cool);
+  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+  text-transform: capitalize;
+}
+.submittedBox {
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(61, 122, 90, 0.3);
+  background: rgba(61, 122, 90, 0.07);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.submissionId {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
+  color: var(--ink);
+  word-break: break-all;
+}
+
+/* ── Inventory: locked name, expiry input, badges, save bar ─────────────── */
+.lockedName {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+.lockedText {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+.lockIcon {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+/* Expiry: a small number input + a period dropdown ("2" + "Week(s)"). */
+.expiryCell {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.expiryNum {
+  width: 3.4rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.5rem;
+}
+.expiryNum:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(201, 139, 107, 0.15);
+}
+.expiryUnit {
+  min-width: 6.2rem;
+}
+
+/* Badges: expiry status + duplicate-batch differentiator. */
+.badge {
+  display: inline-block;
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.badgeExpired {
+  background: rgba(180, 69, 58, 0.14);
+  color: #b4453a;
+  border: 1px solid rgba(180, 69, 58, 0.3);
+}
+.badgeSoon {
+  background: rgba(201, 139, 61, 0.16);
+  color: #a56c1f;
+  border: 1px solid rgba(201, 139, 61, 0.32);
+}
+.badgeBatch {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* Editor footer: "+ Add item" on the left, Save on the right. */
+.editorActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--glass-border);
+  flex-wrap: wrap;
+}
+/* The save result sits UNDER the action row. The global reset zeroes <p> margins,
+   so without this it renders flush against the buttons. */
+.editorNote {
+  margin-top: 0.7rem;
+}
+.saveGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+/* A quiet status note next to Save — deliberately NOT a warning colour. It's
+   information ("your list has drifted from the agent"), not a problem. */
+.saveHint {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* ── "View recipe" modal ────────────────────────────────────────────────────
+   The full ingredient list + method for one recommendation, over a blurred,
+   click-blocking backdrop. Matches the manager PIN modal's overlay treatment;
+   the enter/exit animation comes from the global .bb-modal-overlay/-panel. */
+.recipeOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(42, 36, 48, 0.32);
+  backdrop-filter: blur(6px) saturate(120%);
+  -webkit-backdrop-filter: blur(6px) saturate(120%);
+  overflow-y: auto;
+}
+.recipePanel {
+  width: 100%;
+  max-width: 640px;
+  margin: auto;
+  padding: 1.6rem 1.7rem;
+  border-radius: var(--radius);
+  /* Solid so the blurred page behind never shows through the panel. */
+  background: var(--warm);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 24px 60px rgba(42, 36, 48, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  /* Long recipes scroll inside the panel, not the page. */
+  max-height: min(80vh, 720px);
+  display: flex;
+  flex-direction: column;
+}
+.recipeModalHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+.recipeModalTitle {
+  font-family: var(--font-title);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.2rem;
+}
+.recipeModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  padding-top: 1.1rem;
+  overflow-y: auto;
+}
+.modalClose {
+  flex-shrink: 0;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.modalClose:hover {
+  color: var(--ink);
+  background: var(--glass);
+}
+/* The dataset's raw ingredient lines, e.g. "1 tablespoon Red Chilli powder". */
+.ingList {
+  margin: 0.45rem 0 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+/* Read-only cell text shown for a SAVED (locked) inventory row, in place of the
+   editable input. */
+.roCell {
+  display: inline-block;
+  padding: 0.35rem 0.1rem;
+  font-size: 0.9rem;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* ── "Invent a new dish" (draft) — extra breathing room ─────────────────────
+   .card already supplies the flex column + gap; the draft stacks more distinct
+   blocks (warning, head, ingredients, method, tags, actions), so it gets a
+   slightly wider rhythm on top. */
+.draftCard {
+  gap: 1.3rem;
+}
+
+/* Invent controls: the mode toggle + the "Invent a new dish" button on one row. */
+.inventControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.modeHint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+/* Segmented "From my stock / Beyond my stock" control. */
+.createModes {
+  display: inline-flex;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+}
+.modeBtn {
+  font-family: inherit;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  border-radius: calc(var(--radius-sm) - 2px);
+  cursor: pointer;
+  transition: background 0.15s var(--ease), color 0.15s var(--ease);
+}
+.modeBtn:hover {
+  color: var(--ink);
+}
+.modeBtnActive,
+.modeBtnActive:hover {
+  background: var(--warm);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}

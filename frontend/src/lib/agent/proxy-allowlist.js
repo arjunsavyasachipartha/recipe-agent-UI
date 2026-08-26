@@ -51,6 +51,14 @@ const ROUTES = [
   // The dial's live count. A read with a body — it writes nothing, stores
   // nothing, and costs one pass over a pool already in memory.
   "/v4/reach",
+  // The staple exemption — the dial's other half. `/v4/staples/:id` is the
+  // DELETE and is listed separately for the pantry's reason: this matcher
+  // compares segment counts, not methods. `/v4/staples/reset` needs no entry of
+  // its own — it is two segments and `:id` already matches it, which is worth
+  // knowing rather than discovering: a chef cannot have an ingredient literally
+  // called `reset` (the vocabulary would refuse it), so the two cannot collide.
+  "/v4/staples",
+  "/v4/staples/:id",
   // What a chef kept. Two lists, and only one of them takes writes: a published
   // recipe is kept and un-kept here, while an invented dish enters the other
   // list by being **accepted** at `/v4/feedback` — which is why there is no

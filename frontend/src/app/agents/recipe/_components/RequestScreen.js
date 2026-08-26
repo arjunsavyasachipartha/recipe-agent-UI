@@ -5,6 +5,7 @@ import { agentPost } from "@/lib/agent/client";
 import PantryField from "./PantryField";
 import Dropdown from "./Dropdown";
 import MatchDial from "./MatchDial";
+import StaplesEditor from "./StaplesEditor";
 import IntentEcho from "./IntentEcho";
 import Results from "./Results";
 import { useReach } from "./useReach";
@@ -286,6 +287,15 @@ export default function RequestScreen() {
     <form className={styles.screen} onSubmit={invent}>
       {/* ── 1. The pantry — the only required field ─────────────────────── */}
       <PantryField onChange={setPantry} />
+
+      {/* The staple list, directly under the pantry it belongs beside. It was
+          first put under the match dial, on the reasoning that the exemption is
+          the dial's other half — true of the *arithmetic*, and wrong about the
+          chef. What a chef reads here is a second list of ingredients, and the
+          question it answers — *what am I assumed to already have?* — is the
+          pantry's question, not the dial's. So it sits where the first list
+          ends, collapsed, costing one line until it is wanted. */}
+      <StaplesEditor />
 
       {/* ── 2. The dish ─────────────────────────────────────────────────── */}
       <div className={styles.band}>

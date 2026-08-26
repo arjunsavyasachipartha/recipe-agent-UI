@@ -122,6 +122,23 @@ function injectRestaurantId(raw, restaurantId) {
   return raw;
 }
 
+// How long this function may run before the platform kills it.
+//
+// Declared rather than left to the default because the default is not one
+// number: on Vercel's Hobby plan a function running Fluid compute (now the
+// default for new projects) gets 300s, and one with Fluid compute disabled gets
+// **10s**, which `POST /v4/generate` does not reliably fit inside -- the load
+// measurement is p50 6.5s / p95 7.5s for the composition alone, and a request
+// whose sentence box is read by the model adds that round trip on top
+// (`RECIPE_AGENT_INTENT_MODEL_TIMEOUT`, 12s by default, with the service
+// refusing any deadline under 10s). 60 is valid under both configurations.
+//
+// The symptom of hitting the 10s ceiling is specific and misleading:
+// `GET /v4/search` answers off an in-memory index in milliseconds and works
+// perfectly, while Invent fails with **no traceback on the backend** -- because
+// the backend never failed. It was still composing when the caller was cut off.
+export const maxDuration = 60;
+
 export async function GET(req, ctx) {
   return handle(req, ctx, "GET");
 }

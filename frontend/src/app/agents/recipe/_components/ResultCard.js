@@ -57,11 +57,35 @@ import styles from "./request.module.css";
 //
 // P-IV's rule, and it applies here as much as it does in the search view: the
 // direct lane returns a **published recipe, unchanged**, because it already
-// answers. So its badge says *from our collection*, its source link is on the
-// face of the card rather than folded into the evidence section, and it carries
-// a line saying it is published as it stands. A screen that renders a looked-up
-// dish the way it renders a composed one teaches a chef that this agent invents
-// things it merely found.
+// answers. Its source link is on the face of the card rather than folded into
+// the evidence section, and it carries a line saying it is published as it
+// stands. A screen that renders a looked-up dish the way it renders a composed
+// one teaches a chef that this agent invents things it merely found.
+//
+// ## The badge says *Kitchen-proven* and not *From our collection*, and the
+// difference is which true thing it says
+//
+// The old badge described **provenance** — *where this came from* — which is
+// the framing that invites the reading *so it is a lookup*. That reading is
+// wrong about the mechanism: a direct card is the output of the whole funnel.
+// Retrieval ranked the pool, the composers built alternatives out of it, the
+// seven validation layers assessed all of them, and selection concluded that
+// this published dish answered the brief better than anything composed. The
+// work happened; its verdict was *change nothing*.
+//
+// So the badge names the **verdict** instead, and the hint carries the
+// mechanism, because a chef reading a badge wants to know what was done and a
+// badge alone is only a category.
+//
+// **What did not change, and must not.** The `lane` field on the payload is
+// still `direct`, the parent with `role: "self"` is still the dish itself, the
+// source link is still on the face of the card, and `source: "corpus"` still
+// separates this from anything invented. The contract's promise is that a found
+// dish is never *dressed up* as an invented one — the badge may lead with the
+// judgement, and it may not deny the provenance sitting next to it. That is
+// also why *"something alike"* was considered and refused: this dish is not
+// **like** a published recipe, it **is** one, and a chef who followed the link
+// would catch the badge out.
 
 //: The lane badge. The three words are the brief's own — *substituted / merged /
 //: from our collection* — and the hint under each says what the lane did, since
@@ -78,8 +102,8 @@ const LANE = {
     hint: "structure from one published recipe, ingredients from another",
   },
   direct: {
-    label: "From our collection",
-    hint: "a published recipe, unchanged — it already answers",
+    label: "Kitchen-proven",
+    hint: "a published, already-cooked recipe that answers as it stands — the agent composed alternatives and kept this one unchanged",
   },
   portion: { label: "Re-sized", hint: "a published recipe at a different size" },
   assembly: { label: "Plated", hint: "components served as one item" },

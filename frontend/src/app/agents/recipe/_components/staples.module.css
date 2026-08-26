@@ -1,0 +1,224 @@
+/* The staple editor — the dial's other half, collapsed under it.
+ *
+ * Every colour, radius and easing here is a token from `globals.css`, on
+ * `request.module.css`'s rule: this is a control added inside a design system
+ * that already exists, and the fastest way to make it look like a different
+ * product would be to start inventing values.
+ *
+ * The chips deliberately reuse `request.module.css`'s pill geometry rather than
+ * importing it — two modules cannot share a class, and a chip here carries one
+ * control where the pantry's carries two, so the shapes are near-identical and
+ * the behaviour is not. `.chipOwn` is the one visual difference that means
+ * something: a staple the chef added themselves is marked, because the whole
+ * question this panel answers is *what have I changed*.
+ */
+
+.wrap {
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--glass-soft);
+  overflow: hidden;
+}
+
+/* The collapsed state is one line and has to stay one line: this panel earns
+ * its place by costing nothing until it is opened. */
+.head {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0.5rem 0.7rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--dur) var(--ease);
+}
+
+.head:hover {
+  background: var(--glass-strong);
+}
+
+.headLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.headMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+.caret {
+  font-size: 0.7rem;
+  color: var(--faint);
+}
+
+/* Says *you have changed this* at a glance and in the collapsed state, which is
+ * the state it matters in: a chef whose dial is behaving oddly should be able
+ * to see that they edited the exemption without opening anything. */
+.badge {
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.08rem 0.32rem;
+  border-radius: var(--radius-sm);
+  background: var(--accent-wash);
+  color: var(--accent-deep);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0 0.7rem 0.7rem;
+  border-top: 1px solid var(--hairline);
+  padding-top: 0.6rem;
+}
+
+.blurb {
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ingRow {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.ingRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.reset {
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: none;
+  font: inherit;
+  font-size: 0.76rem;
+  color: var(--muted);
+  padding: 0 0.6rem;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.reset:hover:not(:disabled) {
+  color: var(--accent-deep);
+  border-color: var(--accent);
+}
+
+.reset:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.chipWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  /* Thirty-nine chips is a lot of vertical space on a screen whose argument is
+   * that there is one of it. Capped and scrolled rather than paginated: a chef
+   * scanning for the one that should not be there wants them all in one place. */
+  max-height: 11rem;
+  overflow-y: auto;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  background: var(--glass-strong);
+  font-size: 0.78rem;
+  color: var(--ink);
+  transition: border-color var(--dur) var(--ease);
+}
+
+/* A staple the chef added. Marked because *what have I changed* is the question
+ * this panel exists to answer, and because an unusual exemption — an onion, a
+ * paneer — is the thing most worth being able to spot in a list of forty. */
+.chipOwn {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+
+.chipName {
+  padding: 0.26rem 0.15rem 0.26rem 0.55rem;
+  cursor: default;
+}
+
+.chipX {
+  border: 0;
+  background: none;
+  padding: 0.26rem 0.5rem 0.26rem 0.15rem;
+  line-height: 1;
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.55;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.chipX:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.chipX:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+
+.warn {
+  font-size: 0.78rem;
+  color: #b45454;
+  margin: 0;
+}
+
+/* A caution is **not** an error and must not look like one: the write happened.
+ * It is the accent tint the rest of the product uses for *worth reading*, with
+ * a dismiss, because it is news about one action rather than a standing state.
+ */
+.caution {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  background: var(--accent-wash);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.6rem;
+  margin: 0;
+}
+
+.cautionX {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto;
+}
+
+.cautionX:hover {
+  color: var(--ink);
+}

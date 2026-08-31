@@ -183,15 +183,78 @@ export default function RequestScreen() {
     [chosenRegion]
   );
 
+  // V4 P-VII. Meal, venue and course narrow each other's own dropdown, so a
+  // chef cannot select a combination the funnel is certain to refuse — a QSR
+  // (`Appetizer|Main`) offered against `evening` (`Appetizer|Dessert`) used to
+  // let a chef pick Main or Dessert and only find out afterwards, from an
+  // empty page, that neither survives the other control. Read from the same
+  // two facts the backend fences on: `courses_by_meal_slot`, from
+  // `ml.generation.courses.admissible`, and each venue's own `courses` list —
+  // not a third definition of either rule, just an earlier read of both.
+  const allCourseGroups = options?.courses || [];
+
+  function courseSetForSlot(slot) {
+    if (!slot) return null; // no restriction
+    const list = options?.courses_by_meal_slot?.[slot];
+    return list ? new Set(list) : new Set();
+  }
+
+  function courseSetForVenue(venueType) {
+    if (!venueType) return null; // no restriction
+    const row = options?.venue_types?.find((v) => v.venue_type === venueType);
+    // An empty `courses` list is a venue's declared "narrows nothing" — see
+    // `VenueOption.courses`'s own docstring — not "admits nothing".
+    if (!row || !row.courses || row.courses.length === 0) return null;
+    return new Set(row.courses);
+  }
+
+  // Whether at least one course group survives a slot, a venue and an
+  // optionally-chosen course all at once. Each dropdown below runs this once
+  // per candidate value of its own control, holding the other two fixed.
+  function anyCourseSurvives(slotSet, venueSet, courseSet) {
+    return allCourseGroups.some(
+      (g) =>
+        (!slotSet || slotSet.has(g)) &&
+        (!venueSet || venueSet.has(g)) &&
+        (!courseSet || courseSet.has(g))
+    );
+  }
+
+  const courseChoices = useMemo(() => {
+    const slotSet = courseSetForSlot(mealSlot);
+    const venueSet = courseSetForVenue(venue);
+    return allCourseGroups.filter(
+      (g) => (!slotSet || slotSet.has(g)) && (!venueSet || venueSet.has(g))
+    );
+  }, [options, mealSlot, venue]);
+
+  const mealSlotChoices = useMemo(() => {
+    if (!options?.meal_slots) return [];
+    const venueSet = courseSetForVenue(venue);
+    const courseSet = course ? new Set([course]) : null;
+    return options.meal_slots.filter((slot) =>
+      anyCourseSurvives(courseSetForSlot(slot), venueSet, courseSet)
+    );
+  }, [options, venue, course]);
+
+  const venueChoices = useMemo(() => {
+    if (!options?.venue_types) return [];
+    const slotSet = courseSetForSlot(mealSlot);
+    const courseSet = course ? new Set([course]) : null;
+    return options.venue_types.filter((v) =>
+      anyCourseSurvives(slotSet, courseSetForVenue(v.venue_type), courseSet)
+    );
+  }, [options, mealSlot, course]);
+
   const venueOptions = useMemo(
     () => [
       { value: "", label: "Any kind of place" },
-      ...(options?.venue_types || []).map((v) => ({
+      ...venueChoices.map((v) => ({
         value: v.venue_type,
         label: v.label,
       })),
     ],
-    [options]
+    [venueChoices]
   );
 
   // The chosen cuisine's own row, for the one honest thing a picker can say
@@ -357,7 +420,7 @@ export default function RequestScreen() {
             <Dropdown
               value={mealSlot}
               onChange={setMealSlot}
-              options={withBlank(options?.meal_slots, "Any meal", titleCase)}
+              options={withBlank(mealSlotChoices, "Any meal", titleCase)}
               ariaLabel="Meal"
             />
           </div>
@@ -385,9 +448,16 @@ export default function RequestScreen() {
             <Dropdown
               value={course}
               onChange={setCourse}
-              options={withBlank(options?.courses, "Any course")}
+              options={withBlank(courseChoices, "Any course")}
               ariaLabel="Course"
             />
+            {options && courseChoices.length < allCourseGroups.length && (mealSlot || venue) && (
+              <p className={styles.hint}>
+                Narrowed to what {venue ? "this venue" : ""}
+                {venue && mealSlot ? " and " : ""}
+                {mealSlot ? "this meal" : ""} can serve.
+              </p>
+            )}
           </div>
 
           <div className={styles.cell}>

@@ -209,6 +209,16 @@
   padding-top: 0.1rem;
 }
 
+/* V4 P-VII. A dropdown that narrowed itself against another control says so,
+ * once, in the same quiet register as `.subRow` — the chef should not have to
+ * wonder why an option they expected is no longer offered. */
+.hint {
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+  padding-top: 0.2rem;
+  margin: 0;
+}
+
 .subRow input {
   accent-color: var(--accent);
 }

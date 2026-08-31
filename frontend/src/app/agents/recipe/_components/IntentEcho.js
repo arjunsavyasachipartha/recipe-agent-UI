@@ -38,15 +38,21 @@ import styles from "./request.module.css";
 // `ml/generation/intent.py`'s `DESTINATIONS`, beside the code that performs it.
 
 //: What each unused reason means, in a chef's terms rather than the taxonomy's.
-//: This is a rendering of a closed vocabulary the backend owns — the four words
-//: are `ungrounded`, `ambiguous`, `only_as_an_exclusion` and `cannot_be_refused`
-//: — and an unknown one falls through to the word itself rather than being
-//: dropped, because a reason nobody rendered is still a reason the chef is owed.
+//: This is a rendering of a closed vocabulary the backend owns — the five
+//: words are `ungrounded`, `ambiguous`, `only_as_an_exclusion`,
+//: `cannot_be_refused` and `only_sharpens_a_requirement` — and an unknown one
+//: falls through to the word itself rather than being dropped, because a
+//: reason nobody rendered is still a reason the chef is owed.
 const WHY_NOT = {
   ungrounded: "we have no word for this",
   ambiguous: "this could mean two things",
   only_as_an_exclusion: "this only means something as a “no”",
   cannot_be_refused: "the agent can prefer this but cannot refuse it",
+  // A word like "only" or "strictly" is understood fine — it sharpens a
+  // course, style or method into a rule. There was none of those here to
+  // sharpen: an ingredient is already governed by the match dial, and this
+  // word has nothing else in the sentence to attach to.
+  only_sharpens_a_requirement: "there was nothing here for this to make a rule",
 };
 
 //: How a used phrase is grouped in the summary. The order is the order a chef
@@ -118,6 +124,16 @@ export default function IntentEcho({ intent, edited }) {
     Object.keys(required).length +
     (intent.requirements?.families?.length || 0) +
     (intent.requirements?.techniques?.length || 0);
+  // Only a course, attribute, family or technique can be sharpened into a
+  // rule with "only" — an ingredient is the match dial's, not the sentence
+  // box's, and an exclusion is a rule however it was said. Telling a chef who
+  // wrote nothing else *say "only" to make it a rule* over a sentence that
+  // named just an ingredient was the same instruction the box gives on every
+  // sentence, whether or not the word could do anything here — which is
+  // exactly why *"...only"* on that sentence came back reported as unused.
+  const sharpenable = used.some((u) =>
+    ["attribute", "course", "family", "technique"].includes(u.kind)
+  );
 
   return (
     <div className={styles.echo}>
@@ -151,7 +167,12 @@ export default function IntentEcho({ intent, edited }) {
       </p>
 
       {/* How hard it was read. Named before anything else the echo says,
-          because it is the half that changes what comes back. */}
+          because it is the half that changes what comes back. Shown only
+          when something in the sentence could actually be sharpened this
+          way — an ingredient-only sentence has nothing "only" can fence, and
+          suggesting the word here is the instruction that sent a chef back
+          with "only fish" reported as unused. */}
+      {sharpenable && (
       <p className={styles.echoStrength}>
         {requiredCount > 0 ? (
           <>
@@ -167,6 +188,7 @@ export default function IntentEcho({ intent, edited }) {
           </>
         )}
       </p>
+      )}
 
       {/* The half the brief calls more important, and it comes first. */}
       {unused.length > 0 && (
